@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AliasLibrary;
 
 namespace AliasConsoleApp
 {
@@ -10,12 +7,42 @@ namespace AliasConsoleApp
     {
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            Console.WriteLine("Введите количество команд/учасников: ");
+            Game<Team> game = new Game<Team>(Convert.ToInt32(Console.ReadLine()));
+            game.WordsDownloader();
+                        
+            int counter = 0;
+            int teamCounter = 0;
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+            foreach (var word in game.words)
+            {
+                if (counter >= Game<Team>.qtyWordsByTeam)
+                {
+                    // Переход на следующую команду
+                    counter = 0;
+                    teamCounter++;
+                    if (teamCounter >= game.teams.Length)
+                        break;
+                    Console.WriteLine("А сейчас время для следующей команды!!!");
+                }
+                counter++;
+                Console.WriteLine($"Слово №{counter}: {word.Value}");
+
+                // запись балов на команду
+                Console.WriteLine("Отгадано правильно? Да/Нет");
+                if (Console.ReadLine().ToLower() == "да")
+                    game.teams[teamCounter].AddPoit();
+                else
+                    game.teams[teamCounter].WithdrawPoint();
+            }
+            Console.WriteLine("Игра окончена");
+            Console.WriteLine("Счет команд:");
+            for (int i = 0; i < game.teams.Length; i++)
+            {
+                Console.WriteLine(game.teams[i].Scour);
+            }
+            Console.WriteLine();
+            Console.ReadKey();
         }
     }
 }
